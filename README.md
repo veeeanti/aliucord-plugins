@@ -11,7 +11,7 @@ Click on a plugin name to download, then move the downloaded file to the `/sdcar
 ## 🧩 Available Plugins
 | Plugin | Description |
 |:-------|:------------|
-| [**AccountSwitcher**](https://github.com/zt64/aliucord-plugins/raw/builds/AccountSwitcher.zip) | Adds the ability to quickly switch accounts |
+| [**AccountSwitcher**](https://github.com/veeeanti/aliucord-plugins/raw/builds/AccountSwitcher.zip) | Adds the ability to quickly switch accounts |
 | [**AlwaysAnimate**](https://github.com/zt64/aliucord-plugins/raw/builds/AlwaysAnimate.zip) | Allows making server icons and user avatars always animate |
 | [**AnonymousFiles**](https://github.com/zt64/aliucord-plugins/raw/builds/AnonymousFiles.zip) | Randomize uploaded file names |
 | [**AppendGifAsUrl**](https://github.com/zt64/aliucord-plugins/raw/builds/AppendGifAsUrl.zip) | Makes selecting a GIF add as a URL to the message, instead of sending and clearing your message. |
