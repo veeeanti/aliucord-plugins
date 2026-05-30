@@ -2,7 +2,6 @@ name: "Build"
 
 on:
   push:
-    workflow_dispatch:
     branches:
       - main
     paths:
@@ -11,6 +10,7 @@ on:
       - 'gradle/**'
       - 'plugin/**'
       - '**.gradle.kts'
+  workflow_dispatch:
 
 jobs:
   build:
