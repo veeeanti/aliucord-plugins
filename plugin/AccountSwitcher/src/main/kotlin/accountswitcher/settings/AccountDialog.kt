@@ -14,9 +14,9 @@ import com.discord.stores.StoreStream
 import com.lytefast.flexinput.R
 import java.util.regex.Pattern
 
-private const val TOKEN_REGEX =
-    """(Bot\s+)?(mfa\.[a-z0-9_-]{20,}|[a-z0-9_-]{20,}\.[a-z0-9_-]{5,}\.[a-z0-9_-]{20,})"""
-
+private const val TOKEN_REGEX = 
+    """(Bot\s+)?(/[0-9a-zA-Z_-]{24}\.[0-9a-zA-Z_-]{6}\.[0-9a-zA-Z_-]{38}/)"""
+    
 class AccountDialog(private val adapter: AccountAdapter, private val account: Account? = null) : InputDialog() {
     private val token = account?.token
 
