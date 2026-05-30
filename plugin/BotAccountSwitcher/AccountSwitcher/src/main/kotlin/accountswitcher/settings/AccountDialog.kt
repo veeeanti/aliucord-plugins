@@ -1,0 +1,106 @@
+package accountswitcher.settings
+
+import AccountSwitcher.Companion.accounts
+import accountswitcher.Account
+import accountswitcher.fetchUser
+import android.content.res.ColorStateList
+import android.text.Editable
+import android.text.InputType
+import android.text.TextWatcher
+import android.view.View
+import com.aliucord.Utils
+import com.aliucord.fragments.InputDialog
+import com.discord.stores.StoreStream
+import com.lytefast.flexinput.R
+import java.util.regex.Pattern
+
+private const val TOKEN_REGEX = 
+    """(Bot\s+)?(/[0-9a-zA-Z_-]{24}\.[0-9a-zA-Z_-]{6}\.[0-9a-zA-Z_-]{38}/)"""
+    
+class AccountDialog(private val adapter: AccountAdapter, private val account: Account? = null) : InputDialog() {
+    private val token = account?.token
+
+    private val buttonStates = arrayOf(
+        intArrayOf(android.R.attr.state_enabled), // enabled
+        intArrayOf(-android.R.attr.state_enabled) // disabled
+    )
+
+    override fun onViewBound(view: View) {
+        if (token == null) {
+            setTitle("Add Account")
+            setDescription(
+                """
+Enter your Discord token to add an account.
+You can get this token by using the Token plugin.
+"""
+            )
+        } else {
+            setTitle("Edit Account")
+        }
+
+        setPlaceholderText("Token / Bot (token)")
+
+        setOnOkListener {
+            val inputToken = input.trim().removePrefix("Bot ").trim()
+
+            if (accounts.any { it.value != account && it.value.token == inputToken }) {
+                return@setOnOkListener Utils.showToast("An account with this token already exists")
+            }
+
+            if (account?.token == inputToken) return@setOnOkListener dismiss()
+
+            Utils.threadPool.execute {
+                val userId = fetchUser(inputToken)?.id
+                    ?: return@execute Utils.showToast("Invalid token")
+
+                if (account?.token != null) adapter.removeAccount(account.id)
+
+                adapter.addAccount(inputToken, userId)
+                StoreStream.getUsers().fetchUsers(listOf(userId))
+
+                Utils.mainThread.post {
+                    adapter.notifyItemChanged(
+                        accounts.values.indexOfFirst { it.token == inputToken }
+                    )
+                }
+
+                dismiss()
+            }
+        }
+
+        super.onViewBound(view)
+
+        if (token != null) {
+            inputLayout.editText?.setText(token)
+            body.visibility = View.GONE
+        }
+
+        okButton.isEnabled = token != null
+        okButton.backgroundTintList = ColorStateList(
+            buttonStates,
+            intArrayOf(
+                resources.getColor(
+                    R.c.uikit_btn_bg_color_selector_brand,
+                    context?.theme
+                ), // enabled color
+                resources.getColor(
+                    R.c.uikit_btn_bg_color_selector_secondary,
+                    context?.theme
+                ) // disabled color
+            )
+        )
+
+        inputLayout.editText?.addTextChangedListener(object : TextWatcher {
+            private val pattern = Pattern.compile(TOKEN_REGEX, Pattern.CASE_INSENSITIVE)
+
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
+
+            override fun afterTextChanged(s: Editable?) {
+                okButton.isEnabled = pattern.matcher(s?.trim().toString()).matches()
+            }
+        })
+        inputLayout.editText?.inputType = InputType.TYPE_CLASS_TEXT
+    }
+}
