@@ -15,7 +15,7 @@ import com.lytefast.flexinput.R
 import java.util.regex.Pattern
 
 private const val TOKEN_REGEX =
-    """(mfa\.[a-z0-9_-]{20,})|([a-z0-9_-]{23,28}\.[a-z0-9_-]{6,7}\.([a-z0-9_-]{27,38}))"""
+    """(Bot\s+)?(mfa\.[a-z0-9_-]{20,}|[a-z0-9_-]{20,}\.[a-z0-9_-]{5,}\.[a-z0-9_-]{20,})"""
 
 class AccountDialog(private val adapter: AccountAdapter, private val account: Account? = null) : InputDialog() {
     private val token = account?.token
@@ -38,10 +38,10 @@ You can get this token by using the Token plugin.
             setTitle("Edit Account")
         }
 
-        setPlaceholderText("Token")
+        setPlaceholderText("Token / Bot (token)")
 
         setOnOkListener {
-            val inputToken = input.trim()
+            val inputToken = input.trim().removePrefix("Bot ").trim()
 
             if (accounts.any { it.value != account && it.value.token == inputToken }) {
                 return@setOnOkListener Utils.showToast("An account with this token already exists")

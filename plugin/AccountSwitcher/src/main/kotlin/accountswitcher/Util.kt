@@ -66,14 +66,20 @@ fun migrate(oldSettings: SettingsAPI) {
     oldSettings.resetSettings()
 }
 
-fun fetchUser(token: String): MeUser? = try {
-    Http
-        .Request("https://discord.com/api/v9/users/@me")
-        .setHeader("Authorization", token)
-        .setHeader("User-Agent", RestAPI.AppHeadersProvider.INSTANCE.userAgent)
-        .setHeader("accept", "application/json")
-        .execute()
-        .json(MeUser::class.java)
-} catch (e: Throwable) {
-    null
+fun fetchUser(token: String): MeUser? {
+    val attempt = { authHeader: String ->
+        try {
+            Http
+                .Request("https://discord.com/api/v9/users/@me")
+                .setHeader("Authorization", authHeader)
+                .setHeader("User-Agent", RestAPI.AppHeadersProvider.INSTANCE.userAgent)
+                .setHeader("accept", "application/json")
+                .execute()
+                .json(MeUser::class.java)
+        } catch (e: Throwable) {
+            null
+        }
+    }
+
+    return attempt(token) ?: attempt("Bot $token")
 }
