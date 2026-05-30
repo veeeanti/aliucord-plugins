@@ -1,8 +1,11 @@
-version = "1.4.2"
-description = "Adds the ability to quickly switch accounts"
+version = "1.4.3"
+description = "Adds the ability to quickly switch accounts, now with bot accounts!"
 
 aliucord.changelog.set(
     """
+    # 1.4.3
+    * Added proper bot account support for switching between multiple bots, saves the tokens with "Bot " prefixes to further streamline the process. meant to be used with AliucordBotClient, which will soon be releasing as an apk and installer apk to make it all work properly.
+
     # 1.4.2
     * Fixed crash caused by add account dialog
         
